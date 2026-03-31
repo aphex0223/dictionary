@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ThemeProvider } from '@/context/ThemeContext';
+import { Providers } from './providers';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -9,15 +9,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
+    <html lang="ja" suppressHydrationWarning>
       <body className="antialiased">
-        <ThemeProvider>
+        <Providers>
           {children}
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );
