@@ -50,14 +50,7 @@ export interface LanguageSelectorProps {
 }
 
 export interface TranslationResultProps {
-  data: {
-    sourceText: string;
-    translation: string;
-    sourcePhonetic?: string;
-    targetPhonetic?: string;
-    sourceLang: LanguageCode;
-    targetLang: LanguageCode;
-  };
+  data: TranslateResponse;
 }
 
 export interface ExampleSentencesProps {
