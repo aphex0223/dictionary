@@ -51,8 +51,8 @@ Error (400/500):
 
 ### Error Codes
 
-- `INVALID_INPUT`: Missing or invalid request parameters
-- `TEXT_TOO_LONG`: Text exceeds 500 characters
-- `INVALID_TARGET_LANG`: Invalid target language code
-- `DEEPL_ERROR`: DeepL API failure
+- `INVALID_INPUT`: Missing text, empty text, or invalid target language code
+- `CONFIG_ERROR`: Missing API configuration (DeepL or Volcengine keys)
+- `TRANSLATION_ERROR`: Translation service (DeepL) failure
+- `TIMEOUT`: Request exceeded 30-second timeout
 - `INTERNAL_ERROR`: Unexpected server error
