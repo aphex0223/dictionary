@@ -126,6 +126,21 @@ export default function HomePage() {
             <ExampleSentences examples={data.examples} targetLang={data.targetLang} />
           </div>
         )}
+
+        {/* Empty state */}
+        {!activeSearchText && !isLoading && !error && (
+          <div className="
+            bg-white dark:bg-[#252525]
+            rounded-xl
+            p-12
+            shadow-md dark:shadow-gray-900
+            text-center
+          ">
+            <p className="text-gray-400 dark:text-gray-500">
+              输入词汇开始翻译
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
