@@ -45,9 +45,7 @@ export interface SearchBarProps {
 }
 
 export interface LanguageSelectorProps {
-  sourceLang: SourceLanguageCode;
   targetLang: LanguageCode;
-  onSourceChange: (lang: SourceLanguageCode) => void;
   onTargetChange: (lang: LanguageCode) => void;
 }
 

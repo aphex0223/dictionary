@@ -7,7 +7,7 @@ import SearchBar from '@/components/SearchBar';
 import LanguageSelector from '@/components/LanguageSelector';
 import TranslationResult from '@/components/TranslationResult';
 import ExampleSentences from '@/components/ExampleSentences';
-import type { SourceLanguageCode, LanguageCode, TranslateResponse } from '@/types';
+import type { LanguageCode, TranslateResponse } from '@/types';
 
 // SWR fetcher
 const fetcher = async (url: string, text: string, targetLang: LanguageCode) => {
@@ -30,7 +30,6 @@ const fetcher = async (url: string, text: string, targetLang: LanguageCode) => {
 export default function HomePage() {
   const [searchText, setSearchText] = useState('');
   const [activeSearchText, setActiveSearchText] = useState('');
-  const [sourceLang, setSourceLang] = useState<SourceLanguageCode>('auto');
   const [targetLang, setTargetLang] = useState<LanguageCode>('zh');
 
   // Use SWR for data fetching with caching
@@ -77,9 +76,7 @@ export default function HomePage() {
 
           <div className="mt-4">
             <LanguageSelector
-              sourceLang={sourceLang}
               targetLang={targetLang}
-              onSourceChange={setSourceLang}
               onTargetChange={setTargetLang}
             />
           </div>
