@@ -121,8 +121,17 @@ export async function POST(request: NextRequest) {
 
     // Handle specific error cases
     if (error instanceof Error) {
-      // Fix #2: More robust error detection - check for DeepL errors
-      if (error.message.includes('DeepL') || error.message.includes('DEEPL_API_KEY')) {
+      // Fix #2: Separate configuration errors from service errors
+      // First check for configuration errors
+      if (error.message.includes('DEEPL_API_KEY')) {
+        return NextResponse.json(
+          { error: 'Configuration error', code: 'CONFIG_ERROR', message: 'DeepL API key is not configured' },
+          { status: 500 }
+        );
+      }
+
+      // Then check for service errors
+      if (error.message.includes('DeepL')) {
         return NextResponse.json(
           { error: 'Translation service error', code: 'TRANSLATION_ERROR', message: 'Failed to translate text' },
           { status: 502 }
