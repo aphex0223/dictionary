@@ -22,7 +22,11 @@ function mapToTatoebaLang(lang: LanguageCode): string {
     ja: 'jpn',
     zh: 'cmn' // Mandarin Chinese
   };
-  return mapping[lang];
+  const tatoebaLang = mapping[lang];
+  if (!tatoebaLang) {
+    throw new Error(`Unsupported language code: ${lang}`);
+  }
+  return tatoebaLang;
 }
 
 /**
@@ -32,7 +36,7 @@ export async function fetchExamples(
   word: string,
   sourceLang: LanguageCode,
   targetLang: LanguageCode
-): Promise<Example[]> {
+): Promise<{ examples: Example[]; error?: string }> {
   try {
     const params = new URLSearchParams({
       from: mapToTatoebaLang(sourceLang),
@@ -50,14 +54,15 @@ export async function fetchExamples(
     });
 
     if (!response.ok) {
-      console.error(`Tatoeba API error: ${response.status}`);
-      return [];
+      const error = `Tatoeba API error: ${response.status}`;
+      console.error(error);
+      return { examples: [], error };
     }
 
     const data: TatoebaResponse = await response.json();
 
     if (!data.results || data.results.length === 0) {
-      return [];
+      return { examples: [] };
     }
 
     const examples: Example[] = [];
@@ -79,9 +84,10 @@ export async function fetchExamples(
       }
     }
 
-    return examples;
+    return { examples };
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Failed to fetch Tatoeba examples:', error);
-    return [];
+    return { examples: [], error: errorMessage };
   }
 }
