@@ -32,8 +32,8 @@ function mapFromDeepLLang(deeplLang: string): LanguageCode {
   if (normalized === 'EN') return 'en';
   if (normalized === 'JA') return 'ja';
   if (normalized === 'ZH') return 'zh';
-  // Default to English if unknown
-  return 'en';
+  // Throw an error for unknown language codes
+  throw new Error(`Unknown DeepL language code: ${deeplLang}`);
 }
 
 export async function translateText(
@@ -41,6 +41,10 @@ export async function translateText(
 ): Promise<{ translation: string; detectedSourceLang: LanguageCode }> {
   if (!DEEPL_API_KEY) {
     throw new Error('DEEPL_API_KEY is not configured');
+  }
+
+  if (!params.text || params.text.trim().length === 0) {
+    throw new Error('Text to translate cannot be empty or whitespace-only');
   }
 
   const body = new URLSearchParams();
@@ -80,7 +84,7 @@ export async function translateText(
     };
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`DeepL translation failed: ${error.message}`);
+      throw new Error(`DeepL translation failed: ${error.message}`, { cause: error });
     }
     throw new Error('DeepL translation failed: Unknown error');
   }
