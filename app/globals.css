@@ -51,9 +51,3 @@ html.dark {
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #666;
 }
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
