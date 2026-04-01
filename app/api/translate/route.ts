@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
       const translationResult = await translateText({
         text: body.text,
         targetLang: body.targetLang,
+        sourceLang: body.sourceLang,
       });
 
       const { translation, detectedSourceLang } = translationResult;
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
         body.text,
         detectedSourceLang,
         body.targetLang,
-        2
+        1
       );
 
       // Step 6: Return structured response

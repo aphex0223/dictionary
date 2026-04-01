@@ -5,6 +5,7 @@ export type SourceLanguageCode = 'auto' | LanguageCode;
 // API request/response types
 export interface TranslateRequest {
   text: string;
+  sourceLang?: SourceLanguageCode;
   targetLang: LanguageCode;
 }
 
@@ -45,7 +46,9 @@ export interface SearchBarProps {
 }
 
 export interface LanguageSelectorProps {
+  sourceLang: SourceLanguageCode;
   targetLang: LanguageCode;
+  onSourceChange: (lang: SourceLanguageCode) => void;
   onTargetChange: (lang: LanguageCode) => void;
 }
 

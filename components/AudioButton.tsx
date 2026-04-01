@@ -28,7 +28,7 @@ export default function AudioButton({ text, lang, size = 'large' }: AudioButtonP
     <button
       onClick={handlePlay}
       disabled={isPlaying}
-      className={`${buttonSize} flex items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
+      className={`${buttonSize} flex items-center justify-center rounded-full text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
       aria-label="Play audio"
       title="Play audio"
     >

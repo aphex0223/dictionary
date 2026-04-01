@@ -7,16 +7,16 @@ import SearchBar from '@/components/SearchBar';
 import LanguageSelector from '@/components/LanguageSelector';
 import TranslationResult from '@/components/TranslationResult';
 import ExampleSentences from '@/components/ExampleSentences';
-import type { LanguageCode, TranslateResponse } from '@/types';
+import type { LanguageCode, SourceLanguageCode, TranslateResponse } from '@/types';
 
 // SWR fetcher
-const fetcher = async (url: string, text: string, targetLang: LanguageCode) => {
+const fetcher = async (url: string, text: string, sourceLang: SourceLanguageCode, targetLang: LanguageCode) => {
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ text, targetLang }),
+    body: JSON.stringify({ text, sourceLang: sourceLang === 'auto' ? undefined : sourceLang, targetLang }),
   });
 
   if (!response.ok) {
@@ -30,12 +30,13 @@ const fetcher = async (url: string, text: string, targetLang: LanguageCode) => {
 export default function HomePage() {
   const [searchText, setSearchText] = useState('');
   const [activeSearchText, setActiveSearchText] = useState('');
+  const [sourceLang, setSourceLang] = useState<SourceLanguageCode>('auto');
   const [targetLang, setTargetLang] = useState<LanguageCode>('zh');
 
   // Use SWR for data fetching with caching
   const { data, error, isLoading } = useSWR<TranslateResponse>(
-    activeSearchText ? ['/api/translate', activeSearchText, targetLang] : null,
-    ([url, text, lang]: [string, string, LanguageCode]) => fetcher(url, text, lang),
+    activeSearchText ? ['/api/translate', activeSearchText, sourceLang, targetLang] : null,
+    ([url, text, srcLang, tgtLang]: [string, string, SourceLanguageCode, LanguageCode]) => fetcher(url, text, srcLang, tgtLang),
     {
       revalidateOnFocus: false,
       shouldRetryOnError: false,
@@ -76,7 +77,9 @@ export default function HomePage() {
 
           <div className="mt-4">
             <LanguageSelector
+              sourceLang={sourceLang}
               targetLang={targetLang}
+              onSourceChange={setSourceLang}
               onTargetChange={setTargetLang}
             />
           </div>

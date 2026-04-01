@@ -35,7 +35,7 @@ function buildPrompt(word: string, sourceLang: LanguageCode, targetLang: Languag
   const sourceName = langNames[sourceLang];
   const targetName = langNames[targetLang];
 
-  return `Generate ${count} short example sentences with "${word}" in ${sourceName}. Format: source | translation\nExamples only, no numbering.`;
+  return `Generate ${count} short example sentences with "${word}" in ${targetName}. Format: ${targetName} sentence | ${sourceName} translation\nExamples only, no numbering.`;
 }
 
 /**
@@ -68,7 +68,7 @@ function generateFallbackExamples(
   targetLang: LanguageCode,
   count: number
 ): Example[] {
-  // Create simple contextual examples based on source language
+  // Create simple contextual examples - source is targetLang, translation is sourceLang
   const examples: Example[] = [];
 
   // Create basic sentence patterns based on the word
@@ -81,8 +81,8 @@ function generateFallbackExamples(
   for (let i = 0; i < count && i < patterns.length; i++) {
     const pattern = patterns[i];
     examples.push({
-      source: pattern[sourceLang],
-      translation: pattern[targetLang],
+      source: pattern[targetLang],  // Example in target language
+      translation: pattern[sourceLang],  // Translation in source language
       isGenerated: true
     });
   }
