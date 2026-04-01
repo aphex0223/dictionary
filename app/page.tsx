@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import useSWR from 'swr';
 import ThemeToggle from '@/components/ThemeToggle';
 import SearchBar from '@/components/SearchBar';
 import LanguageSelector from '@/components/LanguageSelector';
 import TranslationResult from '@/components/TranslationResult';
 import ExampleSentences from '@/components/ExampleSentences';
-import type { LanguageCode, SourceLanguageCode, TranslateResponse } from '@/types';
+import type { LanguageCode, SourceLanguageCode, TranslateResponse, Example } from '@/types';
 
 // SWR fetcher
 const fetcher = async (url: string, text: string, sourceLang: SourceLanguageCode, targetLang: LanguageCode) => {
@@ -32,6 +32,8 @@ export default function HomePage() {
   const [activeSearchText, setActiveSearchText] = useState('');
   const [sourceLang, setSourceLang] = useState<SourceLanguageCode>('auto');
   const [targetLang, setTargetLang] = useState<LanguageCode>('zh');
+  const [examples, setExamples] = useState<Example[]>([]);
+  const [examplesLoading, setExamplesLoading] = useState(false);
 
   // Use SWR for data fetching with caching
   const { data, error, isLoading } = useSWR<TranslateResponse>(
@@ -42,6 +44,36 @@ export default function HomePage() {
       shouldRetryOnError: false,
     }
   );
+
+  // Load examples asynchronously after translation completes
+  useEffect(() => {
+    if (data && !isLoading) {
+      setExamplesLoading(true);
+      setExamples([]);
+
+      fetch('/api/examples', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          word: data.translation,
+          sourceLang: data.sourceLang,
+          targetLang: data.targetLang,
+        }),
+      })
+        .then(res => res.json())
+        .then(result => {
+          setExamples(result.examples || []);
+          setExamplesLoading(false);
+        })
+        .catch(err => {
+          console.error('Failed to load examples:', err);
+          setExamples([]);
+          setExamplesLoading(false);
+        });
+    }
+  }, [data, isLoading]);
 
   const handleSearch = useCallback(() => {
     if (searchText.trim()) {
@@ -116,15 +148,17 @@ export default function HomePage() {
         )}
 
         {data && !isLoading && !error && (
-          <div className="
-            bg-white dark:bg-[#252525]
-            rounded-xl
-            p-6
-            shadow-lg dark:shadow-gray-900
-          ">
-            <TranslationResult data={data} />
-            <ExampleSentences examples={data.examples} targetLang={data.targetLang} />
-          </div>
+          <>
+            <div className="
+              bg-white dark:bg-[#252525]
+              rounded-xl
+              p-6
+              shadow-lg dark:shadow-gray-900
+            ">
+              <TranslationResult data={data} />
+            </div>
+            <ExampleSentences examples={examples} targetLang={data.targetLang} isLoading={examplesLoading} />
+          </>
         )}
 
         {/* Empty state */}

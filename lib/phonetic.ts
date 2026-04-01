@@ -95,34 +95,12 @@ function generateJapaneseRomaji(text: string): string {
 
 /**
  * Generate IPA phonetic notation for English text
- * Note: For MVP, we'll use a simple dictionary. Full implementation would use a phonetic library.
+ * Note: For MVP, returns empty string as IPA requires external dictionary
  */
 function generateEnglishPhonetic(text: string): string {
-  // Basic English phonetic dictionary (very limited for MVP)
-  const phoneticDict: Record<string, string> = {
-    'hello': '/həˈloʊ/',
-    'hi': '/haɪ/',
-    'bye': '/baɪ/',
-    'thank': '/θæŋk/',
-    'thanks': '/θæŋks/',
-    'yes': '/jɛs/',
-    'no': '/noʊ/',
-    'please': '/pliːz/',
-    'sorry': '/ˈsɒri/',
-    'welcome': '/ˈwɛlkəm/',
-    'good': '/ɡʊd/',
-    'morning': '/ˈmɔːrnɪŋ/',
-    'afternoon': '/ˌæftərˈnuːn/',
-    'evening': '/ˈiːvnɪŋ/',
-    'night': '/naɪt/',
-    'day': '/deɪ/',
-    'today': '/təˈdeɪ/',
-    'tomorrow': '/təˈmɒroʊ/',
-    'yesterday': '/ˈjɛstərdeɪ/',
-  };
-
-  const normalized = text.toLowerCase().trim();
-  return phoneticDict[normalized] || '';
+  // For English, we don't have a comprehensive IPA dictionary
+  // Return empty string - the UI will handle display
+  return '';
 }
 
 /**

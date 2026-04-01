@@ -65,19 +65,11 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Fix #1: Remove unnecessary Promise wrappers (call synchronous functions directly)
+      // Step 2: Generate phonetics (synchronous, fast)
       const sourcePhonetic = generatePhonetic(body.text, detectedSourceLang);
       const targetPhonetic = generatePhonetic(translation, body.targetLang);
 
-      // Step 3: Generate AI examples using DeepSeek (removed slow Tatoeba API)
-      const finalExamples = await generateExamples(
-        body.text,
-        detectedSourceLang,
-        body.targetLang,
-        1
-      );
-
-      // Step 6: Return structured response
+      // Step 3: Return structured response (examples loaded separately by client)
       const response: TranslateResponse = {
         sourceText: body.text,
         sourceLang: detectedSourceLang,
@@ -85,7 +77,7 @@ export async function POST(request: NextRequest) {
         translation,
         sourcePhonetic,
         targetPhonetic,
-        examples: finalExamples,
+        examples: [], // Examples will be loaded asynchronously by the client
       };
 
       return NextResponse.json(response);
