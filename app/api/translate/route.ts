@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         body.text,
         detectedSourceLang,
         body.targetLang,
-        3
+        2
       );
 
       // Step 6: Return structured response
