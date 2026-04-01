@@ -14,7 +14,7 @@ interface DeepLResponse {
 }
 
 const DEEPL_API_KEY = process.env.DEEPL_API_KEY;
-const DEEPL_API_URL = 'https://api.deepl.com/v2/translate'; // Pro API
+const DEEPL_API_URL = 'https://api.deepl-pro.com/v2/translate'; // Pro API (alternate domain)
 
 // Map our language codes to DeepL's format
 function mapToDeepLLang(lang: LanguageCode): string {
