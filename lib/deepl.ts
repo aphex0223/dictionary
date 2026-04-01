@@ -29,11 +29,17 @@ function mapToDeepLLang(lang: LanguageCode): string {
 // Map DeepL's detected language code back to our format
 function mapFromDeepLLang(deeplLang: string): LanguageCode {
   const normalized = deeplLang.toUpperCase();
-  if (normalized === 'EN') return 'en';
-  if (normalized === 'JA') return 'ja';
-  if (normalized === 'ZH') return 'zh';
-  // Throw an error for unknown language codes
-  throw new Error(`Unknown DeepL language code: ${deeplLang}`);
+
+  // Handle language codes with region suffixes (e.g., EN-US, ZH-Hans)
+  const baseCode = normalized.split('-')[0];
+
+  if (baseCode === 'EN' || normalized.startsWith('EN')) return 'en';
+  if (baseCode === 'JA' || normalized.startsWith('JA')) return 'ja';
+  if (baseCode === 'ZH' || normalized.startsWith('ZH')) return 'zh';
+
+  // Default to English for unsupported languages
+  console.warn(`Unsupported DeepL language code: ${deeplLang}, defaulting to 'en'`);
+  return 'en';
 }
 
 export async function translateText(
