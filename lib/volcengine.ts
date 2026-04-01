@@ -64,6 +64,37 @@ function parseGeneratedExamples(content: string): Example[] {
 }
 
 /**
+ * Generate fallback example sentences when API is not available
+ */
+function generateFallbackExamples(
+  word: string,
+  sourceLang: LanguageCode,
+  targetLang: LanguageCode,
+  count: number
+): Example[] {
+  // Create simple contextual examples based on source language
+  const examples: Example[] = [];
+
+  // Create basic sentence patterns based on the word
+  const patterns = [
+    { en: `I use ${word} every day.`, zh: `我每天都使用${word}。`, ja: `私は毎日${word}を使います。` },
+    { en: `This ${word} is very useful.`, zh: `这个${word}非常有用。`, ja: `この${word}はとても便利です。` },
+    { en: `Please tell me about ${word}.`, zh: `请告诉我关于${word}的信息。`, ja: `${word}について教えてください。` },
+  ];
+
+  for (let i = 0; i < count && i < patterns.length; i++) {
+    const pattern = patterns[i];
+    examples.push({
+      source: pattern[sourceLang],
+      translation: pattern[targetLang],
+      isGenerated: true
+    });
+  }
+
+  return examples;
+}
+
+/**
  * Generate example sentences using Volcengine Doubao API
  */
 export async function generateExamples(
@@ -73,8 +104,9 @@ export async function generateExamples(
   count: number = 3
 ): Promise<Example[]> {
   // Check if API credentials are configured
-  if (!VOLCENGINE_API_KEY || !VOLCENGINE_ENDPOINT) {
-    return [];
+  if (!VOLCENGINE_API_KEY || !VOLCENGINE_ENDPOINT || VOLCENGINE_API_KEY === 'your_volcengine_api_key') {
+    console.warn('Volcengine API not configured, using fallback examples');
+    return generateFallbackExamples(word, sourceLang, targetLang, count);
   }
 
   try {
