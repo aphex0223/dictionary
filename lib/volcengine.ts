@@ -1,17 +1,17 @@
 import type { LanguageCode, Example } from '@/types';
 
-interface VolcengineMessage {
+interface DeepSeekMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
 
-interface VolcengineRequest {
+interface DeepSeekRequest {
   model: string;
-  messages: VolcengineMessage[];
+  messages: DeepSeekMessage[];
   temperature: number;
 }
 
-interface VolcengineResponse {
+interface DeepSeekResponse {
   choices: Array<{
     message: {
       content: string;
@@ -19,8 +19,8 @@ interface VolcengineResponse {
   }>;
 }
 
-const VOLCENGINE_API_KEY = process.env.VOLCENGINE_API_KEY;
-const VOLCENGINE_ENDPOINT = process.env.VOLCENGINE_ENDPOINT;
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const DEEPSEEK_ENDPOINT = process.env.DEEPSEEK_ENDPOINT;
 
 /**
  * Build a prompt for generating example sentences
@@ -35,11 +35,7 @@ function buildPrompt(word: string, sourceLang: LanguageCode, targetLang: Languag
   const sourceName = langNames[sourceLang];
   const targetName = langNames[targetLang];
 
-  return `Generate ${count} example sentences using the word "${word}" in ${sourceName}. For each example, provide both the ${sourceName} sentence and its ${targetName} translation.
-
-Format each example as: source sentence | target translation
-
-Return only the examples, one per line, with no additional text or numbering.`;
+  return `Generate ${count} short example sentences with "${word}" in ${sourceName}. Format: source | translation\nExamples only, no numbering.`;
 }
 
 /**
@@ -95,7 +91,7 @@ function generateFallbackExamples(
 }
 
 /**
- * Generate example sentences using Volcengine Doubao API
+ * Generate example sentences using DeepSeek API
  */
 export async function generateExamples(
   word: string,
@@ -104,45 +100,45 @@ export async function generateExamples(
   count: number = 3
 ): Promise<Example[]> {
   // Check if API credentials are configured
-  if (!VOLCENGINE_API_KEY || !VOLCENGINE_ENDPOINT || VOLCENGINE_API_KEY === 'your_volcengine_api_key') {
-    console.warn('Volcengine API not configured, using fallback examples');
+  if (!DEEPSEEK_API_KEY || !DEEPSEEK_ENDPOINT || DEEPSEEK_API_KEY === 'your_deepseek_api_key') {
+    console.warn('DeepSeek API not configured, using fallback examples');
     return generateFallbackExamples(word, sourceLang, targetLang, count);
   }
 
   try {
     const prompt = buildPrompt(word, sourceLang, targetLang, count);
 
-    const request: VolcengineRequest = {
-      model: 'doubao-pro-32k',
+    const request: DeepSeekRequest = {
+      model: 'deepseek-chat',
       messages: [
         {
           role: 'user',
           content: prompt
         }
       ],
-      temperature: 0.7
+      temperature: 0.3
     };
 
-    const response = await fetch(VOLCENGINE_ENDPOINT, {
+    const response = await fetch(DEEPSEEK_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${VOLCENGINE_API_KEY}`
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
       },
       body: JSON.stringify(request),
       signal: AbortSignal.timeout(10000)
     });
 
     if (!response.ok) {
-      const error = `Volcengine API error: ${response.status}`;
+      const error = `DeepSeek API error: ${response.status}`;
       console.error(error);
-      return [];
+      return generateFallbackExamples(word, sourceLang, targetLang, count);
     }
 
-    const data: VolcengineResponse = await response.json();
+    const data: DeepSeekResponse = await response.json();
 
     if (!data.choices || data.choices.length === 0 || !data.choices[0].message.content) {
-      return [];
+      return generateFallbackExamples(word, sourceLang, targetLang, count);
     }
 
     const content = data.choices[0].message.content;
@@ -151,7 +147,7 @@ export async function generateExamples(
     // Limit to requested count
     return examples.slice(0, count);
   } catch (error) {
-    console.error('Failed to generate examples with Volcengine:', error);
-    return [];
+    console.error('Failed to generate examples with DeepSeek:', error);
+    return generateFallbackExamples(word, sourceLang, targetLang, count);
   }
 }
