@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { translateText } from '@/lib/deepl';
 import { generatePhonetic } from '@/lib/phonetic';
-import { fetchExamples } from '@/lib/tatoeba';
 import { generateExamples } from '@/lib/volcengine';
 import type { TranslateRequest, TranslateResponse, LanguageCode } from '@/types';
 
@@ -69,29 +68,13 @@ export async function POST(request: NextRequest) {
       const sourcePhonetic = generatePhonetic(body.text, detectedSourceLang);
       const targetPhonetic = generatePhonetic(translation, body.targetLang);
 
-      // Step 3: Fetch Tatoeba examples
-      const { examples: tatoebaExamples } = await fetchExamples(
+      // Step 3: Generate AI examples using DeepSeek (removed slow Tatoeba API)
+      const finalExamples = await generateExamples(
         body.text,
         detectedSourceLang,
-        body.targetLang
+        body.targetLang,
+        3
       );
-
-      // Step 4: Generate AI examples if needed (to reach 3 total)
-      let allExamples = [...tatoebaExamples];
-      const neededExamples = 3 - allExamples.length;
-
-      if (neededExamples > 0) {
-        const aiExamples = await generateExamples(
-          body.text,
-          detectedSourceLang,
-          body.targetLang,
-          neededExamples
-        );
-        allExamples = [...allExamples, ...aiExamples];
-      }
-
-      // Step 5: Limit to 3 examples max
-      const finalExamples = allExamples.slice(0, 3);
 
       // Step 6: Return structured response
       const response: TranslateResponse = {
