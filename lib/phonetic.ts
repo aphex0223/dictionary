@@ -35,12 +35,9 @@ function generateChinesePinyin(text: string): string {
 
 /**
  * Generate romaji for Japanese text
- * Note: For MVP, we'll return a placeholder. Full implementation would use kuroshiro.
+ * Note: Only works for pure kana text. Returns empty for text with kanji.
  */
 function generateJapaneseRomaji(text: string): string {
-  // For MVP: Japanese romaji generation is complex and requires kuroshiro + kuromoji
-  // We'll implement a basic version that handles kana
-
   // Hiragana to romaji mapping (basic, incomplete)
   const hiraganaMap: Record<string, string> = {
     'あ': 'a', 'い': 'i', 'う': 'u', 'え': 'e', 'お': 'o',
@@ -79,18 +76,28 @@ function generateJapaneseRomaji(text: string): string {
     'パ': 'pa', 'ピ': 'pi', 'プ': 'pu', 'ペ': 'pe', 'ポ': 'po',
   };
 
+  // Check if text contains kanji (CJK Unified Ideographs)
+  const kanjiRegex = /[\u4e00-\u9faf]/;
+  if (kanjiRegex.test(text)) {
+    // Text contains kanji, we cannot provide accurate romaji
+    return '';
+  }
+
   let result = '';
   for (const char of text) {
     if (hiraganaMap[char]) {
-      result += hiraganaMap[char];
+      result += hiraganaMap[char] + ' ';
     } else if (katakanaMap[char]) {
-      result += katakanaMap[char];
+      result += katakanaMap[char] + ' ';
+    } else if (char === ' ' || char === '　') {
+      result += ' ';
     } else {
-      result += char;
+      // Unknown character - return empty to indicate we can't provide romaji
+      return '';
     }
   }
 
-  return result || text;
+  return result.trim();
 }
 
 /**

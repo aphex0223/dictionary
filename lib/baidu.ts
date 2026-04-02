@@ -93,12 +93,15 @@ export async function translateText(params: BaiduTranslateParams): Promise<{
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Baidu API error response:', errorText);
       throw new Error(`Baidu API error: ${response.status} - ${errorText}`);
     }
 
     const data: BaiduResponse = await response.json();
+    console.log('Baidu API response:', JSON.stringify(data));
 
     if (!data.trans_result || data.trans_result.length === 0) {
+      console.error('Invalid Baidu response:', JSON.stringify(data));
       throw new Error('No translation returned from Baidu');
     }
 
