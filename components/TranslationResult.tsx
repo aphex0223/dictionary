@@ -33,7 +33,9 @@ export default function TranslationResult({ data }: TranslationResultProps) {
         </div>
         <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{sourceText}</p>
         {sourcePhonetic && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 italic">/{sourcePhonetic}/</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {sourceLang === 'en' ? `/${sourcePhonetic}/` : sourcePhonetic}
+          </p>
         )}
       </div>
 
@@ -50,7 +52,9 @@ export default function TranslationResult({ data }: TranslationResultProps) {
         </div>
         <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{translation}</p>
         {targetPhonetic && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 italic">/{targetPhonetic}/</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {targetLang === 'en' ? `/${targetPhonetic}/` : targetPhonetic}
+          </p>
         )}
       </div>
     </div>
