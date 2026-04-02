@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { translateText } from '@/lib/deepl';
+import { translateText } from '@/lib/baidu';
 import { generatePhonetic } from '@/lib/phonetic';
-import { generateExamples } from '@/lib/volcengine';
 import type { TranslateRequest, TranslateResponse, LanguageCode } from '@/types';
 
 // Runtime configuration
@@ -48,7 +47,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Step 1: Translate with DeepL
+      // Step 1: Translate with Baidu
       const translationResult = await translateText({
         text: body.text,
         targetLang: body.targetLang,
@@ -99,15 +98,15 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error) {
       // Fix #2: Separate configuration errors from service errors
       // First check for configuration errors
-      if (error.message.includes('DEEPL_API_KEY')) {
+      if (error.message.includes('BAIDU_APP_ID') || error.message.includes('BAIDU_SECRET_KEY')) {
         return NextResponse.json(
-          { error: 'Configuration error', code: 'CONFIG_ERROR', message: 'DeepL API key is not configured' },
+          { error: 'Configuration error', code: 'CONFIG_ERROR', message: 'Baidu API credentials are not configured' },
           { status: 500 }
         );
       }
 
       // Then check for service errors
-      if (error.message.includes('DeepL')) {
+      if (error.message.includes('Baidu')) {
         return NextResponse.json(
           { error: 'Translation service error', code: 'TRANSLATION_ERROR', message: 'Failed to translate text' },
           { status: 502 }
