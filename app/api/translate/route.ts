@@ -64,9 +64,9 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Step 2: Generate phonetics (synchronous, fast)
-      const sourcePhonetic = generatePhonetic(body.text, detectedSourceLang);
-      const targetPhonetic = generatePhonetic(translation, body.targetLang);
+      // Step 2: Generate phonetics (async for Japanese kana conversion)
+      const sourcePhonetic = await generatePhonetic(body.text, detectedSourceLang);
+      const targetPhonetic = await generatePhonetic(translation, body.targetLang);
 
       // Step 3: Return structured response (examples loaded separately by client)
       const response: TranslateResponse = {
