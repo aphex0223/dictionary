@@ -52,6 +52,7 @@ async function generateJapaneseRomaji(text: string): Promise<string> {
  * Generate IPA phonetic notation for English text
  * Note: For MVP, returns empty string as IPA requires external dictionary
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function generateEnglishPhonetic(_text: string): string {
   // For English, we don't have a comprehensive IPA dictionary
   // Return empty string - the UI will handle display
