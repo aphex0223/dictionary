@@ -45,7 +45,9 @@ export async function convertJapaneseToKana(text: string): Promise<string> {
     // Return format: "hiragana (romaji)"
     return `${hiragana} (${romaji})`;
   } catch (error) {
-    console.error('Failed to convert Japanese:', error);
-    return '';
+    console.error('[Kuroshiro] Conversion failed:', error);
+    // Fallback: Return a message indicating the issue
+    // In production, you might want to use an external API here
+    return `[注音加载失败]`;
   }
 }
