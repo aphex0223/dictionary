@@ -8,8 +8,16 @@ let kuroshiroInstance: Kuroshiro | null = null;
  */
 async function getKuroshiro(): Promise<Kuroshiro> {
   if (!kuroshiroInstance) {
-    kuroshiroInstance = new Kuroshiro();
-    await kuroshiroInstance.init(new KuromojiAnalyzer());
+    try {
+      console.log('[Kuroshiro] Initializing...');
+      kuroshiroInstance = new Kuroshiro();
+      console.log('[Kuroshiro] Created instance, loading analyzer...');
+      await kuroshiroInstance.init(new KuromojiAnalyzer());
+      console.log('[Kuroshiro] Analyzer loaded successfully');
+    } catch (error) {
+      console.error('[Kuroshiro] Initialization failed:', error);
+      throw error;
+    }
   }
   return kuroshiroInstance;
 }

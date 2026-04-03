@@ -1,4 +1,10 @@
 {
   "regions": ["hkg1"],
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "functions": {
+    "app/api/translate/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  }
 }
