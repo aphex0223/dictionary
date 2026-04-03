@@ -23,16 +23,68 @@ async function getKuroshiro(): Promise<Kuroshiro> {
 }
 
 /**
+ * Convert Japanese text to kana and romaji using DeepSeek API
+ * This is used in production Vercel environment where Kuroshiro doesn't work
+ */
+async function convertWithDeepSeek(text: string): Promise<string> {
+  const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+  const DEEPSEEK_ENDPOINT = process.env.DEEPSEEK_ENDPOINT || 'https://api.deepseek.com/v1/chat/completions';
+
+  if (!DEEPSEEK_API_KEY) {
+    console.error('[DeepSeek] API key not configured');
+    return '';
+  }
+
+  try {
+    const response = await fetch(DEEPSEEK_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a Japanese language expert. Convert Japanese text to hiragana and romaji. Return ONLY in this exact format: "hiragana (romaji)" with no extra text or explanation.'
+          },
+          {
+            role: 'user',
+            content: `Convert this Japanese text to hiragana and romaji: ${text}\n\nReturn format: hiragana (romaji)`
+          }
+        ],
+        temperature: 0.1,
+        max_tokens: 100,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`DeepSeek API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const result = data.choices?.[0]?.message?.content?.trim() || '';
+    console.log('[DeepSeek] Converted:', text, '->', result);
+    return result;
+  } catch (error) {
+    console.error('[DeepSeek] Conversion failed:', error);
+    return '';
+  }
+}
+
+/**
  * Convert Japanese text to kana and romaji
  * Returns format: "ひらがな (hiragana)"
  */
 export async function convertJapaneseToKana(text: string): Promise<string> {
-  // Skip Kuroshiro in production Vercel environment due to cold start issues
+  // Use DeepSeek API in production Vercel environment
   if (process.env.VERCEL === '1') {
-    console.log('[Kuroshiro] Skipping in Vercel environment');
-    return `[日语注音功能在线上暂不可用]`;
+    console.log('[Kuroshiro] Using DeepSeek API in Vercel environment');
+    return await convertWithDeepSeek(text);
   }
 
+  // Use Kuroshiro in local development
   try {
     const kuroshiro = await getKuroshiro();
 
@@ -52,6 +104,6 @@ export async function convertJapaneseToKana(text: string): Promise<string> {
     return `${hiragana} (${romaji})`;
   } catch (error) {
     console.error('[Kuroshiro] Conversion failed:', error);
-    return `[注音加载失败]`;
+    return '';
   }
 }
