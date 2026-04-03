@@ -27,6 +27,12 @@ async function getKuroshiro(): Promise<Kuroshiro> {
  * Returns format: "ひらがな (hiragana)"
  */
 export async function convertJapaneseToKana(text: string): Promise<string> {
+  // Skip Kuroshiro in production Vercel environment due to cold start issues
+  if (process.env.VERCEL === '1') {
+    console.log('[Kuroshiro] Skipping in Vercel environment');
+    return `[日语注音功能在线上暂不可用]`;
+  }
+
   try {
     const kuroshiro = await getKuroshiro();
 
@@ -46,8 +52,6 @@ export async function convertJapaneseToKana(text: string): Promise<string> {
     return `${hiragana} (${romaji})`;
   } catch (error) {
     console.error('[Kuroshiro] Conversion failed:', error);
-    // Fallback: Return a message indicating the issue
-    // In production, you might want to use an external API here
     return `[注音加载失败]`;
   }
 }
