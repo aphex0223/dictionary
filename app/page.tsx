@@ -82,100 +82,79 @@ export default function HomePage() {
   }, [searchText]);
 
   return (
-    <div className="min-h-screen p-4 sm:p-8">
-      <div className="max-w-lg mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center px-4 mb-4">
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            日英汉词典
+    <>
+      {/* TopAppBar */}
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-background border-b border-outline-variant/20">
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-black tracking-tighter text-primary font-headline">
+            Jake's
           </h1>
-          <ThemeToggle />
         </div>
+        <ThemeToggle />
+      </header>
 
-        {/* Search Card */}
-        <div className="
-          bg-white dark:bg-[#252525]
-          rounded-xl
-          p-6
-          shadow-md dark:shadow-gray-900
-          mb-4
-        ">
+      <main className="pt-16 pb-8 px-4 max-w-md mx-auto">
+        {/* Language Switcher */}
+        <nav className="flex items-center justify-between gap-2 py-6">
+          <LanguageSelector
+            sourceLang={sourceLang}
+            targetLang={targetLang}
+            onSourceChange={setSourceLang}
+            onTargetChange={setTargetLang}
+          />
+        </nav>
+
+        {/* Input Area */}
+        <section className="mt-2 bg-surface-container-low rounded-2xl p-6 relative shadow-sm">
           <SearchBar
             value={searchText}
             onChange={setSearchText}
             onSearch={handleSearch}
             isLoading={isLoading}
           />
+        </section>
 
-          <div className="mt-4">
-            <LanguageSelector
-              sourceLang={sourceLang}
-              targetLang={targetLang}
-              onSourceChange={setSourceLang}
-              onTargetChange={setTargetLang}
-            />
-          </div>
-        </div>
-
-        {/* Results Card */}
+        {/* Loading State */}
         {isLoading && (
-          <div className="
-            bg-white dark:bg-[#252525]
-            rounded-xl
-            p-6
-            shadow-lg dark:shadow-gray-900
-          ">
+          <section className="mt-8">
             <div className="animate-pulse space-y-4">
-              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-              <div className="h-20 bg-gray-100 dark:bg-gray-800 rounded"></div>
+              <div className="h-12 bg-surface-container rounded-2xl w-3/4"></div>
+              <div className="h-6 bg-surface-container-low rounded-xl w-1/4"></div>
+              <div className="h-20 bg-surface-container-low rounded-2xl"></div>
             </div>
-          </div>
+          </section>
         )}
 
+        {/* Error State */}
         {error && (
-          <div className="
-            bg-white dark:bg-[#252525]
-            rounded-xl
-            p-6
-            shadow-lg dark:shadow-gray-900
-          ">
-            <div className="text-red-500 dark:text-red-400">
+          <section className="mt-8 bg-error-container rounded-2xl p-6">
+            <div className="text-on-error-container">
               <p className="font-semibold">翻译失败</p>
               <p className="text-sm mt-1">{error.message}</p>
             </div>
-          </div>
+          </section>
         )}
 
+        {/* Result Section */}
         {data && !isLoading && !error && (
           <>
-            <div className="
-              bg-white dark:bg-[#252525]
-              rounded-xl
-              p-6
-              shadow-lg dark:shadow-gray-900
-            ">
-              <TranslationResult data={data} />
-            </div>
+            <TranslationResult data={data} />
             <ExampleSentences examples={examples} targetLang={data.targetLang} isLoading={examplesLoading} />
           </>
         )}
 
         {/* Empty state */}
         {!activeSearchText && !isLoading && !error && (
-          <div className="
-            bg-white dark:bg-[#252525]
-            rounded-xl
-            p-12
-            shadow-md dark:shadow-gray-900
-            text-center
-          ">
-            <p className="text-gray-400 dark:text-gray-500">
+          <section className="mt-16 text-center">
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-surface-container mb-4">
+              <span className="material-symbols-outlined text-5xl text-outline">translate</span>
+            </div>
+            <p className="text-on-surface-variant font-label">
               输入词汇开始翻译
             </p>
-          </div>
+          </section>
         )}
-      </div>
-    </div>
+      </main>
+    </>
   );
 }

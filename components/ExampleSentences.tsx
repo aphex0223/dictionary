@@ -19,20 +19,23 @@ export default function ExampleSentences({ examples, targetLang, isLoading }: Ex
     }
   };
 
+  // Check if language uses CJK characters
+  const isCJK = (lang: string) => ['zh', 'ja'].includes(lang);
+
   // Show loading state
   if (isLoading) {
     return (
-      <div className="w-full space-y-4 mt-4 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          例句
+      <section className="mt-12">
+        <h3 className="font-headline text-xs font-bold text-secondary uppercase tracking-[0.2em] mb-6">
+          Usage Examples
         </h3>
         <div className="animate-pulse space-y-4">
-          <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md space-y-3">
-            <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-2/3"></div>
+          <div className="p-5 bg-surface-container-low rounded-2xl">
+            <div className="h-4 bg-surface-container rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-surface-container rounded w-2/3"></div>
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -41,47 +44,33 @@ export default function ExampleSentences({ examples, targetLang, isLoading }: Ex
   }
 
   return (
-    <div className="w-full space-y-4 mt-4 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-        例句
+    <section className="mt-12">
+      <h3 className="font-headline text-xs font-bold text-secondary uppercase tracking-[0.2em] mb-6">
+        Usage Examples
       </h3>
       <div className="space-y-4">
         {examples.map((example, index) => (
           <div
             key={index}
-            className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md space-y-3"
+            className="p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/15 flex gap-4 items-start"
           >
-            {/* Source Example */}
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 mt-1">
-                <AudioButton text={example.source} lang={getAudioLang(targetLang)} size="small" />
-              </div>
-              <p className="flex-1 text-gray-900 dark:text-gray-100">{example.source}</p>
-            </div>
-
-            {/* Translation Example */}
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 mt-1">
-                <AudioButton
-                  text={example.translation}
-                  lang={getAudioLang('en')}
-                  size="small"
-                />
-              </div>
-              <p className="flex-1 text-gray-700 dark:text-gray-300">{example.translation}</p>
-            </div>
-
-            {/* Generated Badge */}
-            {example.isGenerated && (
-              <div className="flex justify-end">
-                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded">
+            <div className="flex-1">
+              <p className={`font-bold text-on-surface mb-2 leading-tight ${isCJK(targetLang) ? 'serif-cjk' : ''}`}>
+                {example.source}
+              </p>
+              <p className="text-sm text-on-surface-variant italic">
+                {example.translation}
+              </p>
+              {example.isGenerated && (
+                <span className="inline-block mt-2 text-[10px] px-2 py-1 rounded bg-tertiary-fixed text-on-tertiary-fixed-variant font-bold uppercase">
                   AI Generated
                 </span>
-              </div>
-            )}
+              )}
+            </div>
+            <AudioButton text={example.source} lang={getAudioLang(targetLang)} size="small" />
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

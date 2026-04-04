@@ -2,13 +2,147 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    /* Material Design 3 Color System */
+    --primary: #000666;
+    --on-primary: #ffffff;
+    --primary-container: #1a237e;
+    --on-primary-container: #8690ee;
+
+    --secondary: #515f74;
+    --on-secondary: #ffffff;
+    --secondary-container: #d5e3fc;
+    --on-secondary-container: #57657a;
+
+    --tertiary: #380b00;
+    --on-tertiary: #ffffff;
+    --tertiary-container: #5c1800;
+    --on-tertiary-container: #e17c5a;
+
+    --error: #ba1a1a;
+    --on-error: #ffffff;
+    --error-container: #ffdad6;
+    --on-error-container: #93000a;
+
+    --background: #f7f9fb;
+    --on-background: #191c1e;
+
+    --surface: #f7f9fb;
+    --on-surface: #191c1e;
+    --surface-variant: #e0e3e5;
+    --on-surface-variant: #454652;
+
+    --outline: #767683;
+    --outline-variant: #c6c5d4;
+
+    --surface-container-lowest: #ffffff;
+    --surface-container-low: #f2f4f6;
+    --surface-container: #eceef0;
+    --surface-container-high: #e6e8ea;
+    --surface-container-highest: #e0e3e5;
+
+    --surface-dim: #d8dadc;
+    --surface-bright: #f7f9fb;
+
+    --inverse-surface: #2d3133;
+    --inverse-on-surface: #eff1f3;
+    --inverse-primary: #bdc2ff;
+
+    --primary-fixed: #e0e0ff;
+    --primary-fixed-dim: #bdc2ff;
+    --on-primary-fixed: #000767;
+    --on-primary-fixed-variant: #343d96;
+
+    --secondary-fixed: #d5e3fc;
+    --secondary-fixed-dim: #b9c7df;
+    --on-secondary-fixed: #0d1c2e;
+    --on-secondary-fixed-variant: #3a485b;
+
+    --tertiary-fixed: #ffdbd0;
+    --tertiary-fixed-dim: #ffb59d;
+    --on-tertiary-fixed: #390c00;
+    --on-tertiary-fixed-variant: #7b2e12;
+  }
+
+  html.dark {
+    --primary: #bdc2ff;
+    --on-primary: #0e1566;
+    --primary-container: #2a3394;
+    --on-primary-container: #e0e0ff;
+
+    --secondary: #b9c7df;
+    --on-secondary: #233141;
+    --secondary-container: #3a485b;
+    --on-secondary-container: #d5e3fc;
+
+    --tertiary: #ffb59d;
+    --on-tertiary: #5d1800;
+    --tertiary-container: #7b2e12;
+    --on-tertiary-container: #ffdbd0;
+
+    --background: #111416;
+    --on-background: #e0e3e5;
+
+    --surface: #111416;
+    --on-surface: #e0e3e5;
+    --surface-variant: #43474e;
+    --on-surface-variant: #c3c6cf;
+
+    --surface-container-lowest: #0c0e10;
+    --surface-container-low: #191c1e;
+    --surface-container: #1d2022;
+    --surface-container-high: #282a2c;
+    --surface-container-highest: #323437;
+  }
+}
+
+/* Font families */
+.font-headline {
+  font-family: var(--font-manrope), sans-serif;
+}
+
+.font-body {
+  font-family: var(--font-inter), sans-serif;
+}
+
+.font-label {
+  font-family: var(--font-inter), sans-serif;
+}
+
+/* CJK Serif for Chinese/Japanese */
+.serif-cjk {
+  font-family: "Noto Serif SC", "Songti SC", "Source Han Serif SC", serif;
+}
+
+/* Material Symbols */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Prevent flash of unstyled content */
 html {
   color-scheme: light;
+  min-height: 100dvh;
 }
 
 html.dark {
   color-scheme: dark;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--on-background);
 }
 
 /* Custom scrollbar for dark mode */
@@ -17,14 +151,15 @@ html.dark {
 }
 
 .dark ::-webkit-scrollbar-track {
-  background: #2d2d2d;
+  background: var(--surface-container);
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #555;
+  background: var(--surface-container-highest);
   border-radius: 5px;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #666;
+  background: var(--on-surface-variant);
 }
+

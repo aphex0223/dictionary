@@ -22,17 +22,17 @@ export default function AudioButton({ text, lang, size = 'large' }: AudioButtonP
     }
   };
 
-  const buttonSize = size === 'small' ? 'w-6 h-6 text-sm' : 'w-8 h-8 text-base';
-
   return (
     <button
       onClick={handlePlay}
       disabled={isPlaying}
-      className={`${buttonSize} flex items-center justify-center rounded-full text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
+      className={`p-2 rounded-full ${size === 'large' ? 'bg-surface-container-high' : ''} text-primary hover:bg-surface-container-highest transition-colors disabled:opacity-50`}
       aria-label="Play audio"
       title="Play audio"
     >
-      {isPlaying ? '⏸' : '🔊'}
+      <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+        {isPlaying ? 'pause_circle' : 'volume_up'}
+      </span>
     </button>
   );
 }
