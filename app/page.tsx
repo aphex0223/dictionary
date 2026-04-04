@@ -87,7 +87,7 @@ export default function HomePage() {
       <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-background border-b border-outline-variant/20">
         <div className="flex items-center gap-4">
           <h1 className="text-xl font-black tracking-tighter text-primary font-headline">
-            Jake's
+            Jake&apos;s
           </h1>
         </div>
         <ThemeToggle />

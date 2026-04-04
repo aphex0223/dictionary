@@ -22,10 +22,6 @@ export default function LanguageSelector({
     { value: 'zh', label: 'Chinese' },
   ];
 
-  const getLanguageLabel = (code: string) => {
-    return [...sourceLanguages, ...targetLanguages].find(l => l.value === code)?.label || code;
-  };
-
   return (
     <>
       <div className="flex-1">
