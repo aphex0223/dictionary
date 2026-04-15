@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async rewrites() {
+    return [
+      { source: '/dict/:path*', destination: '/:path*' },
+      { source: '/dict', destination: '/' },
+    ]
+  },
   env: {
     // Support both Vercel and EdgeOne Pages
     SITE_URL: process.env.VERCEL_URL
