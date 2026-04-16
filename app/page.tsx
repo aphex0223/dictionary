@@ -11,7 +11,11 @@ import type { LanguageCode, SourceLanguageCode, TranslateResponse, Example } fro
 
 // SWR fetcher
 const fetcher = async (url: string, text: string, sourceLang: SourceLanguageCode, targetLang: LanguageCode) => {
-  const response = await fetch(url, {
+  // Fix API endpoint path - make sure it includes basePath if configured
+  const isProduction = process.env.NODE_ENV === 'production';
+  const apiUrl = isProduction ? `/dict${url}` : url;
+  
+  const response = await fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -19,19 +23,40 @@ const fetcher = async (url: string, text: string, sourceLang: SourceLanguageCode
     body: JSON.stringify({ text, sourceLang: sourceLang === 'auto' ? undefined : sourceLang, targetLang }),
   });
 
+  // Read response body once
+  const responseText = await response.text();
+  
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Translation failed');
+    let errorMessage = 'Translation failed';
+    try {
+      const error = JSON.parse(responseText);
+      errorMessage = error.message || errorMessage;
+    } catch {
+      console.error('API error response:', responseText);
+      // Try to extract meaningful error from HTML
+      if (responseText.includes('404') || responseText.includes('Not Found')) {
+        errorMessage = 'API endpoint not found';
+      } else if (responseText.includes('500') || responseText.includes('Internal Server Error')) {
+        errorMessage = 'Internal server error';
+      }
+    }
+    throw new Error(errorMessage);
   }
 
-  return response.json();
+  // Ensure response is valid JSON
+  try {
+    return JSON.parse(responseText);
+  } catch {
+    console.error('Invalid JSON response:', responseText);
+    throw new Error('Invalid response from server');
+  }
 };
 
 export default function HomePage() {
   const [searchText, setSearchText] = useState('');
   const [activeSearchText, setActiveSearchText] = useState('');
   const [sourceLang, setSourceLang] = useState<SourceLanguageCode>('auto');
-  const [targetLang, setTargetLang] = useState<LanguageCode>('zh');
+  const [targetLang, setTargetLang] = useState<LanguageCode>('ja');
   const [examples, setExamples] = useState<Example[]>([]);
   const [examplesLoading, setExamplesLoading] = useState(false);
 
@@ -51,7 +76,11 @@ export default function HomePage() {
       setExamplesLoading(true);
       setExamples([]);
 
-      fetch('/api/examples', {
+      // Fix API endpoint path - make sure it includes basePath if configured
+      const isProduction = process.env.NODE_ENV === 'production';
+      const examplesUrl = isProduction ? '/dict/api/examples' : '/api/examples';
+      
+      fetch(examplesUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +91,22 @@ export default function HomePage() {
           targetLang: data.targetLang,
         }),
       })
-        .then(res => res.json())
+        .then(async res => {
+          // Read response body once
+          const responseText = await res.text();
+          
+          if (!res.ok) {
+            console.error('Examples API error response:', responseText);
+            throw new Error(`API error: ${res.status}`);
+          }
+          
+          try {
+            return JSON.parse(responseText);
+          } catch {
+            console.error('Invalid JSON response from examples API:', responseText);
+            throw new Error('Invalid response from examples server');
+          }
+        })
         .then(result => {
           setExamples(result.examples || []);
           setExamplesLoading(false);
