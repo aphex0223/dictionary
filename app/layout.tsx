@@ -1,8 +1,19 @@
 import type { Metadata } from 'next';
-// 使用系统字体而不是从 Google Fonts 加载，以避免网络依赖
-// import { Manrope, Inter } from 'next/font/google';
+import { Manrope, Inter } from 'next/font/google';
 import { Providers } from './providers';
 import './globals.css';
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-manrope',
+  display: 'swap',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Curator - Academic Translation',
@@ -15,13 +26,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" suppressHydrationWarning>
+    <html lang="ja" suppressHydrationWarning className={`${manrope.variable} ${inter.variable}`}>
       <head>
-        {/* 移除 Google Fonts 引用，避免网络依赖 */}
-        {/* <link
+        <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
-        /> */}
+        />
       </head>
       <body className="antialiased font-body">
         <Providers>
